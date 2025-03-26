@@ -45,6 +45,7 @@ import Popover from 'src/components/Popover';
 import { prepareCopyToClipboardTabularData } from 'src/utils/common';
 import CopyToClipboard from 'src/components/CopyToClipboard';
 import { getTimeColumns, setTimeColumns } from './utils';
+import { formatSingleDate } from '../controls/DateFilterControl/utils';
 
 export const CellNull = styled('span')`
   color: ${({ theme }) => theme.colors.grayscale.light1};
@@ -349,7 +350,7 @@ export const useTableColumns = (
                     originalFormattedTimeColumnIndex === -1 &&
                     typeof value === 'number'
                   ) {
-                    return timeFormatter(value);
+                    return formatSingleDate(timeFormatter(value));
                   }
                   if (typeof value === 'string' && allowHTML) {
                     return safeHtmlSpan(value);

@@ -33,6 +33,7 @@ from superset.common.query_actions import get_query_results
 from superset.common.utils import dataframe_utils
 from superset.common.utils.query_cache_manager import QueryCacheManager
 from superset.common.utils.time_range_utils import (
+    _transform_temporal_columns,
     get_since_until_from_query_object,
     get_since_until_from_time_range,
 )
@@ -646,6 +647,7 @@ class QueryContextProcessor:
         self, df: pd.DataFrame, coltypes: list[GenericDataType]
     ) -> str | list[dict[str, Any]]:
         if self._query_context.result_format in ChartDataResultFormat.table_like():
+            df = _transform_temporal_columns(df, coltypes)
             include_index = not isinstance(df.index, pd.RangeIndex)
             columns = list(df.columns)
             verbose_map = self._qc_datasource.data.get("verbose_map", {})

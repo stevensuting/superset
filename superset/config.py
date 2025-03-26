@@ -187,7 +187,7 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 # or use `SUPERSET_SECRET_KEY` environment variable.
 # Use a strong complex alphanumeric string and use a tool to help you generate
 # a sufficiently random sequence, ex: openssl rand -base64 42"
-SECRET_KEY = os.environ.get("SUPERSET_SECRET_KEY") or CHANGE_ME_SECRET_KEY
+SECRET_KEY ="lwDXAP9sqXufh67SazyX5vxEc/HMjvT6/VUVNR8AqHojnWSt6YWu3E8A"  #os.environ.get("SUPERSET_SECRET_KEY") or CHANGE_ME_SECRET_KEY
 
 # The SQLAlchemy connection string.
 SQLALCHEMY_DATABASE_URI = (
@@ -266,6 +266,7 @@ WTF_CSRF_EXEMPT_LIST = [
     "superset.views.core.explore_json",
     "superset.charts.data.api.data",
     "superset.dashboards.api.cache_dashboard_screenshot",
+    "superset.dashboards.api.export_dashboard_excel"
 ]
 
 # Whether to run the web server in debug mode or not
@@ -465,7 +466,7 @@ DEFAULT_FEATURE_FLAGS: dict[str, bool] = {
     # editor no longer shows. Currently this is set to false so that the editor
     # option does show, but we will be depreciating it.
     "DISABLE_LEGACY_DATASOURCE_EDITOR": True,
-    "ENABLE_TEMPLATE_PROCESSING": False,
+    "ENABLE_TEMPLATE_PROCESSING": True,
     # Allow for javascript controls components
     # this enables programmers to customize certain charts (like the
     # geospatial ones) by inputting javascript in controls. This exposes
@@ -622,6 +623,9 @@ GET_FEATURE_FLAGS_FUNC: Callable[[dict[str, bool]], dict[str, bool]] | None = No
 # callable when the config key is set, so don't use both GET_FEATURE_FLAGS_FUNC
 # and IS_FEATURE_ENABLED_FUNC in conjunction.
 IS_FEATURE_ENABLED_FUNC: Callable[[str, bool | None], bool] | None = None
+
+
+TEMPORAL_COLUMN_FORMAT = 'DD-MM-YYYY'
 # A function that expands/overrides the frontend `bootstrap_data.common` object.
 # Can be used to implement custom frontend functionality,
 # or dynamically change certain configs.
@@ -634,7 +638,7 @@ IS_FEATURE_ENABLED_FUNC: Callable[[str, bool | None], bool] | None = None
 # Returns a dict containing data that should be added or overridden to the payload.
 COMMON_BOOTSTRAP_OVERRIDES_FUNC: Callable[  # noqa: E731
     [dict[str, Any]], dict[str, Any]
-] = lambda data: {}
+] = lambda data: {"TEMPORAL_COLUMN_FORMAT":TEMPORAL_COLUMN_FORMAT}
 
 # EXTRA_CATEGORICAL_COLOR_SCHEMES is used for adding custom categorical color schemes
 # example code for "My custom warm to hot" color scheme
@@ -947,7 +951,7 @@ BACKUP_COUNT = 30
 QUERY_LOGGER = None
 
 # Set this API key to enable Mapbox visualizations
-MAPBOX_API_KEY = os.environ.get("MAPBOX_API_KEY", "")
+MAPBOX_API_KEY = os.environ.get("MAPBOX_API_KEY", "pk.eyJ1Ijoia2FseWFubXJpa2FsIiwiYSI6ImNtMjFwb3RhMDAwdmwyanEwMmdnaW1jZW8ifQ.X8GmagGygP1fuTk5do6Qew")
 
 # Maximum number of rows returned for any analytical database query
 SQL_MAX_ROW = 100000
@@ -1181,7 +1185,14 @@ CSV_DEFAULT_NA_NAMES = list(STR_NA_VALUES)
 # It's important to make sure that the objects exposed (as well as objects attached
 # to those objects) are harmless. We recommend only exposing simple/pure functions that
 # return native types.
-JINJA_CONTEXT_ADDONS: dict[str, Callable[..., Any]] = {}
+def custom_function(*args,**kwargs):
+   
+    from flask import request
+    # Access request object and do processing
+    return request.cookies
+
+
+JINJA_CONTEXT_ADDONS: dict[str, Callable[..., Any]] = {'custom_function': custom_function}
 
 # A dictionary of macro template processors (by engine) that gets merged into global
 # template processors. The existing template processors get updated with this
@@ -1653,7 +1664,7 @@ STATIC_ASSETS_PREFIX = ""
 
 # Some sqlalchemy connection strings can open Superset to security risks.
 # Typically these should not be allowed.
-PREVENT_UNSAFE_DB_CONNECTIONS = True
+PREVENT_UNSAFE_DB_CONNECTIONS = False
 
 # If true all default urls on datasets will be handled as relative URLs by the frontend
 PREVENT_UNSAFE_DEFAULT_URLS_ON_DATASET = True

@@ -42,6 +42,7 @@ import ControlPopover from '../ControlPopover/ControlPopover';
 import { DateFilterControlProps, FrameType } from './types';
 import {
   DateFilterTestKey,
+  formatTimerange,
   FRAME_OPTIONS,
   guessFrame,
   useDefaultTimeFilter,
@@ -316,7 +317,9 @@ export default function DateFilterLabel(props: DateFilterControlProps) {
         <div className="section-title">{t('Actual time range')}</div>
         {validTimeRange && (
           <div>
-            {evalResponse === 'No filter' ? t('No filter') : evalResponse}
+            {evalResponse === 'No filter'
+              ? t('No filter')
+              : formatTimerange(evalResponse)}
           </div>
         )}
         {!validTimeRange && (
@@ -381,7 +384,11 @@ export default function DateFilterLabel(props: DateFilterControlProps) {
         getPopupContainer={trigger => trigger.parentElement as HTMLElement}
       >
         <DateLabel
-          label={actualTimeRange}
+          label={
+            actualTimeRange === 'No filter'
+              ? actualTimeRange
+              : formatTimerange(actualTimeRange)
+          }
           isActive={show}
           isPlaceholder={actualTimeRange === NO_TIME_RANGE}
           data-test={DateFilterTestKey.PopoverOverlay}

@@ -44,6 +44,7 @@ import {
   FrameComponentProps,
 } from 'src/explore/components/controls/DateFilterControl/types';
 import { ExplorePageState } from 'src/explore/types';
+import getBootstrapData from 'src/utils/getBootstrapData';
 
 export function CustomFrame(props: FrameComponentProps) {
   const { customRange, matchedFlag } = customTimeRangeDecode(props.value);
@@ -118,6 +119,20 @@ export function CustomFrame(props: FrameComponentProps) {
   const datePickerLocale =
     locales[LOCALE_MAPPING[localFromFlaskBabel]]?.DatePicker;
 
+  const temporal_format =
+    getBootstrapData()?.common?.TEMPORAL_COLUMN_FORMAT || 'YYYY-MM-DD';
+  const formatHasTime =
+    temporal_format.includes('H') ||
+    temporal_format.includes('h') ||
+    temporal_format.includes('m') ||
+    temporal_format.includes('s') ||
+    temporal_format.includes('S') ||
+    temporal_format.includes('A') ||
+    temporal_format.includes('a');
+  const temporal_column_format = formatHasTime
+    ? temporal_format
+    : `${temporal_format}THH:mm:ss`;
+
   return (
     <div data-test="custom-frame">
       <div className="section-title">{t('Configure custom time range')}</div>
@@ -144,6 +159,7 @@ export function CustomFrame(props: FrameComponentProps) {
                 onChange={(datetime: Moment) =>
                   onChange('sinceDatetime', datetime.format(MOMENT_FORMAT))
                 }
+                format={temporal_column_format}
                 allowClear={false}
                 locale={datePickerLocale}
               />
@@ -199,6 +215,7 @@ export function CustomFrame(props: FrameComponentProps) {
                 }
                 allowClear={false}
                 locale={datePickerLocale}
+                format={temporal_column_format}
               />
             </Row>
           )}
@@ -257,6 +274,7 @@ export function CustomFrame(props: FrameComponentProps) {
                   allowClear={false}
                   className="control-anchor-to-datetime"
                   locale={datePickerLocale}
+                  format={temporal_column_format}
                 />
               </Col>
             )}

@@ -143,6 +143,7 @@ export interface MenuData {
 }
 
 export interface CommonBootstrapData {
+  TEMPORAL_COLUMN_FORMAT: any;
   flash_messages: FlashMessage[];
   conf: JsonObject;
   locale: Locale;
