@@ -48,7 +48,20 @@ case "${1}" in
     ;;
   app)
     echo "Starting web app (using development server)..."
-    flask run -p 8088 --with-threads --reload --debugger --host=0.0.0.0
+## create Admin user, you can read these values from env or anywhere else possible
+    superset fab create-admin --username "$ADMIN_USERNAME" --firstname Superset --lastname Admin --email "$ADMIN_EMAIL" --password "$ADMIN_PASSWORD"
+#
+### Upgrading Superset metastore
+    superset db upgrade
+#
+### setup roles and permissions
+    superset init
+#
+### Starting server
+    /bin/sh -c /usr/bin/run-server.sh
+    #superset superset init
+    #echo "Launching..."
+    #flask run -p 8088 --with-threads --reload --debugger --host=0.0.0.0
     ;;
   app-gunicorn)
     echo "Starting web app..."

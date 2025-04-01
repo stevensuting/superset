@@ -31,9 +31,7 @@ x-superset-volumes:
 
 x-common-build: &common-build
   context: .
-  target: dev
-  cache_from:
-    - apache/superset-cache:3.10-slim-bookworm
+  dockerfile: Dockerfile.stephen
 
 services:
   redis:
@@ -44,34 +42,35 @@ services:
       - redis:/data
 
   db:
-    env_file:
-      - path: docker/.env # default
-        required: true
-      - path: docker/.env-local # optional override
-        required: false
+    env_file: docker/.env
     image: postgres:15
-    container_name: superset_db
+    container_name: postgres_db
     restart: unless-stopped
+    environment:
+      POSTGRES_USER: superset
+      POSTGRES_PASSWORD: superset
+      POSTGRES_DB: superset
+    ports:
+      - "5432:5432"
     volumes:
       - db_home:/var/lib/postgresql/data
       - ./docker/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
 
   superset:
-    env_file:
-      - path: docker/.env # default
-        required: true
-      - path: docker/.env-local # optional override
-        required: false
-    build:
-      <<: *common-build
-    container_name: superset_app
-    command: ["/app/docker/docker-bootstrap.sh", "app-gunicorn"]
-    user: "root"
-    restart: unless-stopped
-    ports:
-      - 8088:8088
-    depends_on: *superset-depends-on
-    volumes: *superset-volumes
+      build:
+        context: .
+        dockerfile: Dockerfile.stephen
+      container_name: superset_app
+      command: app
+      environment:
+        - ADMIN_USERNAME=admin
+        - ADMIN_EMAIL=admin@superset.com
+        - ADMIN_PASSWORD=admin
+      ports:
+        - '8088:8088'
+      depends_on:
+        - db
+        - redis
 
   superset-init:
     container_name: superset_init
