@@ -1,4 +1,4 @@
-FROM harsh443/superset:latest 
+FROM harsh443/superset:v4.1.1
 
 USER root
 RUN apt-get update
@@ -16,6 +16,7 @@ RUN pip install flower
 RUN pip install pymongo
 RUN pip install pyathena 
 RUN pip install PyAthenaJDBC
+
 RUN apt-get update && \
     apt-get install -yqq --no-install-recommends \
     libmariadb3 libmariadb-dev \
@@ -25,29 +26,11 @@ RUN apt-get update && \
     curl \
     firefox-esr
 
-ARG GECKODRIVER_VERSION=0.33.0
-
 ENV ADMIN_USERNAME $ADMIN_USERNAME
 ENV ADMIN_EMAIL $ADMIN_EMAIL
 ENV ADMIN_PASSWORD $ADMIN_PASSWORD
 
-# Install headless firefox
-#RUN wget -q -O geckodriver-v${GECKODRIVER_VERSION}-linux64.tar.gz https://github.com/mozilla/geckodriver/releases/download/v${GECKODRIVER_VERSION}/geckodriver-v${GECKODRIVER_VERSION}-linux64.tar.gz && \
-#    tar -xzf geckodriver-v${GECKODRIVER_VERSION}-linux64.tar.gz && \
-#    mv geckodriver /usr/bin/geckodriver && \
-#    chmod 755 /usr/bin/geckodriver && \
-#    rm geckodriver-v${GECKODRIVER_VERSION}-linux64.tar.gz
-# Install Mariadb Connector/C dependency for python mariadb library
-#RUN git clone https://github.com/MariaDB/mariadb-connector-c.git && \
-#mkdir build && cd build && \
-#      cmake ../mariadb-connector-c/ -DCMAKE_INSTALL_PREFIX=/usr && \
-#      make && \
-#      make install
-
-#COPY ./superset-init.sh /superset-init.sh
-
 COPY superset_config.py /app/
-# COPY custom_security.py /app/
 COPY ./docker/docker-bootstrap.sh /app/
 COPY ./superset-websocket/ /app/superset-websocket
 

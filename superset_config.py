@@ -1,8 +1,8 @@
 ENABLE_PROXY_FIX = True
 
-SECRET_KEY = "45rRYX654erTu$R987654erg"
+#SECRET_KEY = "45rRYX654erTu$R987654erg"
 
-SQLALCHEMY_DATABASE_URI= "postgresql+psycopg2://superset:superset@db:5432/superset"
+#SQLALCHEMY_DATABASE_URI= "postgresql+psycopg2://superset:superset@db:5432/superset"
 
 #SQLALCHEMY_DATABASE_URI = (os.environ.get("SQLALCHEMY_DATABASE_URI"))
 
